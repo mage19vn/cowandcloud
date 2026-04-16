@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Space ❤️</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; display: flex; flex-direction: column; height: 100vh; margin: 0; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+        .msg { max-width: 70%; padding: 10px 15px; border-radius: 18px; font-size: 14px; line-height: 1.4; position: relative; }
+        .msg.sent { align-self: flex-end; background: #0084ff; color: white; border-bottom-right-radius: 4px; }
+        .msg.received { align-self: flex-start; background: #e4e6eb; color: black; border-bottom-left-radius: 4px; }
+        #input-area { background: white; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #ddd; }
+        input { flex: 1; border: 1px solid #ddd; padding: 10px; border-radius: 20px; outline: none; }
+        button { background: #0084ff; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="chat-container"></div>
+
+    <form id="input-area">
+        <input type="text" id="msg-input" placeholder="Nhập tin nhắn..." autocomplete="off">
+        <button type="submit">Gửi</button>
+    </form>
+
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getAnalytics } from "firebase/analytics";
+        
+        
+        const firebaseConfig = {
+        apiKey: "AIzaSyD0pIanEWQpZwBJhgql758ZR8r5w9nmN6c",
+        authDomain: "cowandcloud.firebaseapp.com",
+        databaseURL: "https://cowandcloud-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "cowandcloud",
+        storageBucket: "cowandcloud.firebasestorage.app",
+        messagingSenderId: "600573735568",
+        appId: "1:600573735568:web:2f63143324e344c6b1de15",
+        measurementId: "G-SX40HH3LRY"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const chatRef = ref(db, "messages");
+
+        // Định danh người dùng (Tạm thời dùng ID ngẫu nhiên cho mỗi lần mở trang)
+        // Sau này bạn có thể sửa thành 'Hung' và 'NguoiYeu'
+        const userId = Math.random().toString(36).substring(7);
+
+        const form = document.getElementById('input-area');
+        const input = document.getElementById('msg-input');
+        const container = document.getElementById('chat-container');
+
+        // Gửi tin nhắn
+        form.onsubmit = (e) => {
+            e.preventDefault();
+            if (input.value.trim()) {
+                push(chatRef, {
+                    sender: userId,
+                    text: input.value,
+                    timestamp: Date.now()
+                });
+                input.value = "";
+            }
+        };
+
+        // Nhận tin nhắn theo thời gian thực
+        onChildAdded(chatRef, (data) => {
+            const msg = data.val();
+            const div = document.createElement('div');
+            div.className = `msg ${msg.sender === userId ? 'sent' : 'received'}`;
+            div.textContent = msg.text;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        });
+    </script>
+</body>
+</html>
