@@ -25,27 +25,27 @@
     </form>
 
     <script type="module">
-        import { initializeApp } from "firebase/app";
-        import { getAnalytics } from "firebase/analytics";
+        // Đã sửa lại thành link CDN và import đầy đủ các hàm cần thiết cho database
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
         
-        
+        // Cấu hình Firebase của bạn
         const firebaseConfig = {
-        apiKey: "AIzaSyD0pIanEWQpZwBJhgql758ZR8r5w9nmN6c",
-        authDomain: "cowandcloud.firebaseapp.com",
-        databaseURL: "https://cowandcloud-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "cowandcloud",
-        storageBucket: "cowandcloud.firebasestorage.app",
-        messagingSenderId: "600573735568",
-        appId: "1:600573735568:web:2f63143324e344c6b1de15",
-        measurementId: "G-SX40HH3LRY"
+            apiKey: "AIzaSyD0pIanEWQpZwBJhgql758ZR8r5w9nmN6c",
+            authDomain: "cowandcloud.firebaseapp.com",
+            databaseURL: "https://cowandcloud-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "cowandcloud",
+            storageBucket: "cowandcloud.firebasestorage.app",
+            messagingSenderId: "600573735568",
+            appId: "1:600573735568:web:2f63143324e344c6b1de15",
+            measurementId: "G-SX40HH3LRY"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const chatRef = ref(db, "messages");
 
-        // Định danh người dùng (Tạm thời dùng ID ngẫu nhiên cho mỗi lần mở trang)
-        // Sau này bạn có thể sửa thành 'Hung' và 'NguoiYeu'
+        // Định danh người dùng
         const userId = Math.random().toString(36).substring(7);
 
         const form = document.getElementById('input-area');
@@ -65,7 +65,7 @@
             }
         };
 
-        // Nhận tin nhắn theo thời gian thực
+        // Nhận tin nhắn
         onChildAdded(chatRef, (data) => {
             const msg = data.val();
             const div = document.createElement('div');
